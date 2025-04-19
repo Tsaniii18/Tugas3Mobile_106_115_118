@@ -7,7 +7,6 @@ import 'features/number_type_app.dart';
 import 'features/lbs_tracking_app.dart';
 import 'features/time_conversion_app.dart';
 import 'features/recommended_sites_app.dart';
-import 'features/favorites_app.dart';
 import 'utils/session_manager.dart';
 
 class HomePage extends StatefulWidget {
@@ -24,24 +23,51 @@ class _HomePageState extends State<HomePage> {
     HelpPage(),
   ];
 
+  Future<void> _logout() async {
+    bool confirm = await showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Konfirmasi Logout'),
+        content: Text('Apakah Anda yakin ingin logout?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: Text('Batal'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text('Logout'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirm == true) {
+      await SessionManager.logout();
+      Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Multi-Feature App'),
+        backgroundColor: Colors.brown,
         actions: [
           IconButton(
             icon: Icon(Icons.logout),
-            onPressed: () async {
-              await SessionManager.logout();
-              Navigator.pushReplacementNamed(context, '/');
-            },
+            onPressed: _logout,
+            tooltip: 'Logout',
           ),
         ],
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _currentIndex,
+        backgroundColor: Colors.brown.shade100,
+        selectedItemColor: Colors.brown.shade800,
+        unselectedItemColor: Colors.brown.shade400,
         onTap: (index) {
           setState(() {
             _currentIndex = index;
@@ -98,59 +124,74 @@ class _MainMenuPage extends StatelessWidget {
       'color': Colors.red,
       'page': RecommendedSitesApp(),
     },
-    {
-      'title': 'Favorit',
-      'icon': Icons.favorite,
-      'color': Colors.pink,
-      'page': FavoritesApp(),
-    },
   ];
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: GridView.builder(
-        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.0,
+    return Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.brown.shade100, Colors.brown.shade300],
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
         ),
-        itemCount: menuItems.length,
-        itemBuilder: (context, index) {
-          final item = menuItems[index];
-          return Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: InkWell(
-              borderRadius: BorderRadius.circular(12),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: GridView.builder(
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            crossAxisSpacing: 16,
+            mainAxisSpacing: 16,
+            childAspectRatio: 0.9,
+          ),
+          itemCount: menuItems.length,
+          itemBuilder: (context, index) {
+            final item = menuItems[index];
+            return GestureDetector(
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => item['page']),
                 );
               },
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(item['icon'], size: 40, color: item['color']),
-                  SizedBox(height: 10),
-                  Text(
-                    item['title'],
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
+              child: AnimatedContainer(
+                duration: Duration(milliseconds: 300),
+                decoration: BoxDecoration(
+                  color: Colors.brown.shade50,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.brown.withOpacity(0.2),
+                      blurRadius: 8,
+                      offset: Offset(2, 4),
                     ),
-                    textAlign: TextAlign.center,
-                  ),
-                ],
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    CircleAvatar(
+                      backgroundColor: item['color'].withOpacity(0.2),
+                      child: Icon(item['icon'], size: 40, color: item['color']),
+                      radius: 30,
+                    ),
+                    SizedBox(height: 12),
+                    Text(
+                      item['title'],
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.brown.shade800,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

@@ -39,12 +39,10 @@ class _StopwatchAppState extends State<StopwatchApp> {
     int seconds = (hundreds / 100).truncate();
     int minutes = (seconds / 60).truncate();
     int hours = (minutes / 60).truncate();
-
     String hoursStr = (hours % 60).toString().padLeft(2, '0');
     String minutesStr = (minutes % 60).toString().padLeft(2, '0');
     String secondsStr = (seconds % 60).toString().padLeft(2, '0');
     String hundredsStr = (hundreds % 100).toString().padLeft(2, '0');
-
     return '$hoursStr:$minutesStr:$secondsStr.$hundredsStr';
   }
 
@@ -80,63 +78,111 @@ class _StopwatchAppState extends State<StopwatchApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.brown[50], // Background coklat muda
       appBar: AppBar(
         title: Text('Stopwatch'),
+        backgroundColor: Colors.brown,
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.all(16),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              _display,
-              style: TextStyle(fontSize: 48, fontWeight: FontWeight.bold),
+            Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+              elevation: 8,
+              color: Colors.brown[100], // Card lebih coklat
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Center(
+                  child: Text(
+                    _display,
+                    style: TextStyle(
+                      fontSize: 48,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.brown[800],
+                    ),
+                  ),
+                ),
+              ),
             ),
             SizedBox(height: 30),
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
+                _buildControlButton(
+                  label: _isRunning ? 'Stop' : 'Start',
+                  color: _isRunning ? Colors.red : Colors.green,
                   onPressed: _toggleStopwatch,
-                  child: Text(_isRunning ? 'Stop' : 'Start'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: _isRunning ? Colors.red : Colors.green,
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  ),
+                  icon: _isRunning ? Icons.pause : Icons.play_arrow,
                 ),
-                SizedBox(width: 20),
-                ElevatedButton(
+                _buildControlButton(
+                  label: 'Reset',
+                  color: Colors.blue,
                   onPressed: _resetStopwatch,
-                  child: Text('Reset'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  ),
+                  icon: Icons.refresh,
                 ),
-                SizedBox(width: 20),
-                ElevatedButton(
+                _buildControlButton(
+                  label: 'Lap',
+                  color: Colors.orange,
                   onPressed: _isRunning ? _recordLap : null,
-                  child: Text('Lap'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15),
-                  ),
+                  icon: Icons.flag,
                 ),
               ],
             ),
-            SizedBox(height: 30),
-            if (_laps.isNotEmpty)
-              Expanded(
-                child: ListView.builder(
-                  itemCount: _laps.length,
-                  itemBuilder: (context, index) {
-                    return ListTile(
-                      leading: Text('Lap ${_laps.length - index}'),
-                      trailing: Text(_laps[index]),
-                    );
-                  },
-                ),
-              ),
+            SizedBox(height: 20),
+            Expanded(
+              child: _laps.isEmpty
+                  ? Center(
+                      child: Text(
+                        'Belum ada lap dicatat',
+                        style: TextStyle(color: Colors.brown),
+                      ),
+                    )
+                  : ListView.separated(
+                      itemCount: _laps.length,
+                      separatorBuilder: (context, index) => Divider(),
+                      itemBuilder: (context, index) {
+                        return ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.brown[200],
+                            child: Text(
+                              '${_laps.length - index}',
+                              style: TextStyle(color: Colors.brown[900]),
+                            ),
+                          ),
+                          title: Text(
+                            _laps[index],
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              color: Colors.brown[800],
+                            ),
+                          ),
+                        );
+                      },
+                    ),
+            ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildControlButton({
+    required String label,
+    required Color color,
+    required VoidCallback? onPressed,
+    required IconData icon,
+  }) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, color: Colors.white),
+      label: Text(label),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
         ),
       ),
     );

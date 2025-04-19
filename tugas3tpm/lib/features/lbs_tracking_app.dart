@@ -65,8 +65,10 @@ class _LbsTrackingAppState extends State<LbsTrackingApp> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.brown[50], // Background coklat muda
       appBar: AppBar(
         title: Text('Tracking LBS'),
+        backgroundColor: Colors.brown, // AppBar coklat
       ),
       body: Center(
         child: Padding(
@@ -74,11 +76,15 @@ class _LbsTrackingAppState extends State<LbsTrackingApp> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.location_on, size: 60, color: Colors.blue),
+              Icon(Icons.location_on, size: 80, color: Colors.brown[700]), // Ikon lokasi yang lebih besar
               SizedBox(height: 20),
               Text(
                 'Lokasi Saat Ini',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.brown[800], // Teks coklat
+                ),
               ),
               SizedBox(height: 20),
               if (_isLoading)
@@ -86,7 +92,7 @@ class _LbsTrackingAppState extends State<LbsTrackingApp> {
               else if (_errorMessage.isNotEmpty)
                 Text(
                   _errorMessage,
-                  style: TextStyle(color: Colors.red),
+                  style: TextStyle(color: Colors.red, fontSize: 18),
                   textAlign: TextAlign.center,
                 )
               else if (_currentPosition != null)
@@ -94,20 +100,28 @@ class _LbsTrackingAppState extends State<LbsTrackingApp> {
                   children: [
                     Text(
                       'Latitude: ${_currentPosition!.latitude.toStringAsFixed(6)}',
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 18, color: Colors.brown[700]),
                     ),
                     Text(
                       'Longitude: ${_currentPosition!.longitude.toStringAsFixed(6)}',
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 18, color: Colors.brown[700]),
                     ),
                     Text(
                       'Akurasi: ${_currentPosition!.accuracy.toStringAsFixed(2)} meter',
-                      style: TextStyle(fontSize: 18),
+                      style: TextStyle(fontSize: 18, color: Colors.brown[700]),
                     ),
                     SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: _getCurrentLocation,
                       child: Text('Refresh Lokasi'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.brown, // Tombol coklat
+                        padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                        textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
                     ),
                   ],
                 )
@@ -115,6 +129,14 @@ class _LbsTrackingAppState extends State<LbsTrackingApp> {
                 ElevatedButton(
                   onPressed: _getCurrentLocation,
                   child: Text('Dapatkan Lokasi'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.brown, // Tombol coklat
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
             ],
           ),

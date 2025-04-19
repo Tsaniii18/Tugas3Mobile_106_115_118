@@ -22,7 +22,7 @@ class _TimeConversionAppState extends State<TimeConversionApp> {
     final years = double.tryParse(_yearsController.text.trim());
     if (years == null) return;
 
-    final days = years * 365.25; // Accounting for leap years
+    final days = years * 365.25;
     final hours = days * 24;
     final minutes = hours * 60;
     final seconds = minutes * 60;
@@ -41,20 +41,36 @@ ${years.toStringAsFixed(2)} tahun sama dengan:
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.brown[50], // Background coklat muda
       appBar: AppBar(
         title: Text('Konversi Waktu'),
+        backgroundColor: Colors.brown,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
         child: Form(
           key: _formKey,
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text(
+                'Masukkan jumlah tahun:',
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.brown[800],
+                ),
+              ),
+              SizedBox(height: 10),
               TextFormField(
                 controller: _yearsController,
                 decoration: InputDecoration(
-                  labelText: 'Masukkan jumlah tahun',
-                  border: OutlineInputBorder(),
+                  hintText: 'Contoh: 2.5',
+                  filled: true,
+                  fillColor: Colors.white,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
                 keyboardType: TextInputType.numberWithOptions(decimal: true),
                 validator: (value) {
@@ -69,24 +85,37 @@ ${years.toStringAsFixed(2)} tahun sama dengan:
                 },
               ),
               SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: _convertTime,
-                child: Text('Konversi'),
-                style: ElevatedButton.styleFrom(
-                  padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+              Center(
+                child: ElevatedButton.icon(
+                  onPressed: _convertTime,
+                  icon: Icon(Icons.access_time),
+                  label: Text('Konversi'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.brown,
+                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                    textStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
                 ),
               ),
               SizedBox(height: 30),
               if (_result.isNotEmpty)
-                Container(
-                  padding: EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.blue),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Text(
-                    _result,
-                    style: TextStyle(fontSize: 16),
+                Card(
+                  color: Colors.brown[100],
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                  child: Padding(
+                    padding: const EdgeInsets.all(20),
+                    child: Text(
+                      _result,
+                      style: TextStyle(
+                        fontSize: 16,
+                        color: Colors.brown[900],
+                        height: 1.5,
+                      ),
+                    ),
                   ),
                 ),
             ],
